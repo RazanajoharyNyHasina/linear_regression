@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <exception>
+#include <limits>
 
 typedef std::vector<double> data;
 
@@ -23,7 +23,14 @@ static void open_file(std::ifstream &file)
 	}
 }
 
-static void append_data(std::stringstream &stream, data &mileage, data &price, std::string &line, const int &line_number)
+static void append_data(
+    std::stringstream &stream,
+    data &mileage,
+    data &price,
+    std::string &line,
+    const int &line_number,
+    double &biggestMileage,
+    double &biggestPrice)
 {
 	std::string tmp;
 	double mileage_cell;
@@ -50,13 +57,20 @@ static void append_data(std::stringstream &stream, data &mileage, data &price, s
 		}
 		if (not found_error)
 		{
+			biggestMileage = (mileage_cell > biggestMileage) ? mileage_cell : biggestMileage;
+			biggestPrice = (price_cell > biggestPrice) ? price_cell : biggestPrice;
 			mileage.push_back(mileage_cell);
 			price.push_back(price_cell);
 		}
 	}
 }
 
-static void parse(std::ifstream &file, data &mileage, data &price)
+static void parse(
+    std::ifstream &file,
+    data &mileage,
+    data &price,
+    double &biggestMileage,
+    double &biggestPrice)
 {
 	std::string line;
 	std::string tmp;
@@ -71,8 +85,52 @@ static void parse(std::ifstream &file, data &mileage, data &price)
 
 		if (line.empty())
 			continue;
-		append_data(ss, mileage, price, line, line_number);
-		line_number++;
+		append_data(ss, mileage, price, line, line_number, biggestMileage, biggestPrice);
+	}
+}
+
+static void normalize(data &inputData, double maxValue)
+{
+	for (double &m : inputData)
+		m /= maxValue;
+}
+
+double estimate_price(double mileage, double theta0, double theta1)
+{
+	return (theta0 + (theta1 * mileage));
+}
+
+void train(
+    data &mileages,
+    data &prices,
+    double learning_rate,
+    int iterations,
+    double &theta0,
+    double &theta1)
+{
+	int m = mileages.size();
+
+	theta0 = 0.0;
+	theta1 = 0.0;
+	for (int iter = 0; iter < iterations; iter++)
+	{
+		double sum0 = 0.0;
+		double sum1 = 0.0;
+
+		for (int i = 0; i < m; i++)
+		{
+			double prediction = estimate_price(mileages[i], theta0, theta1);
+			double error = prediction - prices[i];
+
+			sum0 += error;
+			sum1 += error * mileages[i];
+		}
+
+		double tmp_theta0 = learning_rate * (1.0 / m) * sum0;
+		double tmp_theta1 = learning_rate * (1.0 / m) * sum1;
+
+		theta0 -= tmp_theta0;
+		theta1 -= tmp_theta1;
 	}
 }
 
@@ -81,12 +139,23 @@ int main(void)
 	std::ifstream file;
 	data mileage;
 	data price;
+	double theta0;
+	double theta1;
+	double maxMileage = std::numeric_limits<double>::lowest();
+	double maxPrice = std::numeric_limits<double>::lowest();
 
 	open_file(file);
-	parse(file, mileage, price);
+	parse(file, mileage, price, maxMileage, maxPrice);
 
-	for (size_t i = 0; i < mileage.size(); i++)
-		std::cout << mileage[i] << "," << price[i] << std::endl;
+	normalize(mileage, maxMileage);
+	normalize(price, maxPrice);
+
+	train(mileage, price, 0.1, 10000, theta0, theta1);
+
+	theta0 = theta0 * maxPrice;
+	theta1 = (theta1 * maxPrice) / maxMileage;
+
+	std::cout << theta0 << "," << theta1 << std::endl;
 
 	file.close();
 	return (0);
