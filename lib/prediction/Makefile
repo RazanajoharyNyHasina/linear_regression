@@ -1,20 +1,20 @@
 NAME		:= prediction_program
 
-CC		:= gcc
+CC		:= g++
 CFLAGS		:= -Wall -Wextra -Werror
 CPPFLAGS	:= -Isrc/include
 
 SRC := \
-	src/main.c
+	src/main.cpp
 
-OBJ := $(SRC:src/%.c=objects/%.o)
+OBJ := $(SRC:src/%.cpp=objects/%.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
-objects/%.o: src/%.c
+objects/%.o: src/%.cpp
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
