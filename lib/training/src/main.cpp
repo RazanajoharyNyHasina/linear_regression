@@ -157,6 +157,17 @@ int main(void)
 
 	std::cout << theta0 << "," << theta1 << std::endl;
 
+	std::ofstream output_file;
+	output_file.open("training_data.txt", std::ios_base::out);
+
+	if (output_file.is_open())
+	{
+		output_file << theta0 << "," << theta1 << std::endl;
+		output_file.close();
+	}
+	else
+		std::cerr << "training_program: output_file.open() : can't open file to output\n";
+
 	file.close();
 	return (0);
 }
