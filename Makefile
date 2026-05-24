@@ -15,6 +15,7 @@ clean:
 fclean:
 	$(MAKE) -C lib/prediction fclean
 	$(MAKE) -C lib/training fclean
+	rm -rf prediction_program training_program training_data.csv
 
 re: 
 	$(MAKE) -C lib/prediction re
