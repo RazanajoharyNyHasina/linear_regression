@@ -158,10 +158,11 @@ int main(void)
 	std::cout << theta0 << "," << theta1 << std::endl;
 
 	std::ofstream output_file;
-	output_file.open("training_data.txt", std::ios_base::out);
+	output_file.open("training_data.csv", std::ios_base::out);
 
 	if (output_file.is_open())
 	{
+		output_file << "km,price\n";
 		output_file << theta0 << "," << theta1 << std::endl;
 		output_file.close();
 	}
