@@ -4,7 +4,7 @@
 
 int main(void)
 {
-	std::ifstream input_file("./training_data.txt");
+	std::ifstream input_file("./training_data.csv");
 
 	double theta0 = 0.0;
 	double theta1 = 0.0;
@@ -12,11 +12,14 @@ int main(void)
 
 	if (not input_file.is_open())
 	{
-		std::cerr << "prediction_program: input_file.open(): can't open training_data.txt\n";
+		std::cerr << "prediction_program: input_file.open(): can't open training_data.csv\n";
 		exit(1);
 	}
 
 	std::string line;
+
+	std::getline(input_file, line); // skip first line
+
 	if (not std::getline(input_file, line))
 	{
 		std::cerr << "prediction_program: std::getline() : failed to get line\n";
