@@ -12,7 +12,14 @@ int main(void)
 
 	if (not input_file.is_open())
 	{
-		std::cerr << "prediction_program: input_file.open(): can't open training_data.csv\n";
+		std::cout << "Enter the mileage: ";
+		while (!(std::cin >> mileage_input))
+		{
+			std::cin.clear();
+			std::cin.ignore(10000, '\n');
+			std::cerr << "Invalid input. Try again: ";
+		}
+		std::cout << "The estimated price for a mileage of " << mileage_input << " are " << theta0 + (theta1 * mileage_input) << std::endl;
 		exit(1);
 	}
 
