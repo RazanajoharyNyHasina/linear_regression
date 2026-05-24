@@ -2,7 +2,7 @@ NAME		:= training_program
 
 CC		:= g++
 CFLAGS		:= -Wall -Wextra -Werror -g
-CPPFLAGS	:= -Isrc/include -I../libft/include
+CPPFLAGS	:= -Isrc/include
 
 SRC := \
 	src/main.cpp
@@ -12,7 +12,7 @@ OBJ := $(SRC:src/%.cpp=objects/%.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) ../libft/libft.a -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 objects/%.o: src/%.cpp
 	mkdir -p $(dir $@)
