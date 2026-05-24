@@ -5,7 +5,7 @@ prediction_program:
 	mv lib/prediction/prediction_program ./
 
 training_program:
-	$(MAKE) -C lib/prediction
+	$(MAKE) -C lib/training
 	mv lib/training/training_program ./
 
 clean:
